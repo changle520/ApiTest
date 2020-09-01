@@ -4,7 +4,9 @@ from django.shortcuts import render
 
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def welcome(request):
     # return HttpResponse("欢迎来到主页")
     return render(request,'welcome.html')
@@ -13,6 +15,7 @@ def welcome(request):
 def case_list(request):
     return render(request,'caselist.html')
 
+@login_required
 def home(request):
     return render(request,'welcome.html',{"whichHTML":"home.html","oid":""})
 
@@ -31,6 +34,8 @@ def login_action(request):
     user=auth.authenticate(username=u_nmae,password=p_word)
     if user is not None:
         # return HttpResponseRedirect('/home/')
+        auth.login(request,user)
+        request.session['user']=u_nmae
         return HttpResponse('成功')
     else:
         return HttpResponse('失败')
