@@ -3,26 +3,27 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
+        <style>
+            body{
+                background-attachment:fixed;
+                background-size:cover;
+            }
+        </style>
     </head>
     <body>
         <div style="text-align:center">
-            <h1>欢迎{{username}}使用接口测试平台</h1>
-            <h3>Welcome to ApiTest</h3>
-            <div style="border:1px solid black;width:200px;text-align:left;margin-left:-webkit-calc(50% - 100px);padding-left:10px">
-                <h2>如何使用:</h2>
-                1.打开左侧菜单<br>
-                2.找到要用的功能<br>
-                3.点击进入<br><br>
-            </div>
-
-            <h2>更新信息:</h2>
-            <span>项目管理上线，并修复已知Bug</span>
-
-            <h2>反馈:</h2>
-            <span>如有问题,请发邮件至:xxxxxx@qq.com</span><br>
-            <span>或进入 <a href="">本平台的优化建议</a>中反馈</span>
-            <br><br>
-            <img src="/static/logo.png" alt="图片丢了">
+            <h1 style="color:black">欢迎{{username}}使用接口测试平台</h1>
+            <h3 style="color:black">Welcome to ApiTest</h3>
+            <textarea id="tucao_input" cols="30" rows="10" placeholder="匿名吐槽专用"></textarea>
+            <br>
+            <button onclick="pei()">留言</button>
         </div>
+        <script>
+            function pei(){
+                $.get("/pei/",{"tucao_text":document.getElementById("tucao_input").value},function(ret){
+                    alert("留言成功")
+                })
+            }
+        </script>
     </body>
 </html>

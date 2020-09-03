@@ -13,34 +13,28 @@
     </head>
     <body>
         <nav id="navbar" class="">
-                <ul>
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-bell-o"></i>
-                            项目管理
-                        </a>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    项目列表
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    接口库
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/case_list/">
-                                    用例库
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </li>
-                </ul>
-
+            <ul>
+                <li>
+                    <a href="#">
+                        项目列表
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        接口调试
+                    </a>
+                </li>
+                <li>
+                    <a href="/help/">
+                        帮助
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/" target="_blank">
+                        后台
+                    </a>
+                </li>
+            </ul>
         </nav>
         <button id="menu_btn" onclick="display_menu()" style="margin-left:220px">隐藏</button>
         <script>
@@ -59,9 +53,15 @@
                     }
             }
         </script>
-        <a href="/home/">
-            <button style="float:right">🏠主页</button>
-        </a>
+        <div style="float:right">
+            <a href="/home/">
+                <button style="height:35px;width:100px;background-color:#353c48;color:white;font-size:large">🏠主页</button>
+            </a>
+            <br>
+            <a href="/logout/">
+                <button style="height:35px;width:100px;background-color:#353c48;color:white;border-radius:0px 0px 0px 10px;font-size:large">退出</button>
+            </a>
+        </div>>
         <script src="/static/201908059658/js/jquery-1.11.0.min.js" type="text/javascript"></script>
             <!--include plugin js-->
             <script type="text/javascript" src="/static/201908059658/src/jquery-rvnm.js"></script>

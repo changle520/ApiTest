@@ -20,5 +20,5 @@ from MyApp.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),url(r'^welcome/$',welcome),url('^caselist/$',case_list),url('^home/$',home),url(r"^child/(?P<eid>.+)/(?P<oid>.*)/$", child),url(r'^login/$',login),
-    url(r'^login_action/$',login_action),url(r'^register_action/$',register_action),url(r'^accounts/login/$',login)
+    url(r'^login_action/$',login_action),url(r'^register_action/$',register_action),url(r'^accounts/login/$',login),url(r'^logout/$',logout),url(r'^pei/$',pei),url(r'^help/$',api_help)
 ]
