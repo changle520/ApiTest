@@ -14,6 +14,14 @@
         <div style="text-align:center">
             <h1 style="color:black">欢迎{{username}}使用接口测试平台</h1>
             {#这里放超级传送门#}
+            <div>
+                <h3>欢迎使用传送门</h3>
+                <strong>
+                    {% for i in hrefs %}
+                        <a href="{{i.href}}">{{i.name}}</a><br>
+                    {% endfor %}
+                </strong>
+            </div>
         </div>
         <div style="position:absolute;bottom:5px;right:5px">
             <textarea id="tucao_input" cols="30" rows="10" placeholder="匿名吐槽专用"></textarea>
