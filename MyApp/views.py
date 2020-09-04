@@ -23,7 +23,18 @@ def home(request):
     return render(request,'welcome.html',{"whichHTML":"home.html","oid":""})
 
 def child(request,eid,oid):
-    return render(request,eid)
+    res=child_json(eid)
+    return render(request,eid,res)
+
+def child_json(eid):
+    '''
+    数据分发器：控制不同的页面返回不同的数据
+    :param eid:
+    :return:
+    '''
+    if eid=='home.html':
+        date=DB_home_href.objects.all()
+        res={"hrefs":date}
 
 def login(request):
     return render(request,'login.html')
