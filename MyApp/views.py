@@ -32,9 +32,14 @@ def child_json(eid):
     :param eid:
     :return:
     '''
+    res={}
     if eid=='home.html':
-        date=DB_home_href.objects.all()
-        res={"hrefs":date}
+        data=DB_home_href.objects.all()
+        res={"hrefs":data}
+    if eid=="project_list.html":
+        data=DB_project.objects.all()
+        res={"projects":data}
+    return res
 
 def login(request):
     return render(request,'login.html')
@@ -77,6 +82,10 @@ def pei(request):
 
 def api_help(request):
     return render(request,"welcome.html",{"whichHTML":"help.html","oid":""})
+
+def project_list(request):
+    return render(request,'welcome.html',{"whichHTML":"project_list.html","oid":""})
+
 
 
 
