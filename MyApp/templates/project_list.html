@@ -11,7 +11,7 @@
     <button style="border-left: 10px solid black;border-right: 10px solid black;border-top: 0;
     position: fixed;top: 0px;left: -webkit-calc(50% - 75px);width: 150px;height: 40px;font-size: x-large;background-color: white;color:black ;
     border-radius: 0px 0px 10px 10px;">新增项目</button>
-    
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -21,10 +21,25 @@
         <tbody>
                 {% for i in projects %}
                     <tr>
-                        <td>{{i.id}}</td><td>{{i.name}}</td><td>{{i.user}}</td><td>{{i.remark}}</td><td><button class="btn btn-success">查看</button><button class="btn btn-danger">删除</button></td>
+                        <td>{{i.id}}</td>
+                        <td>{{i.name}}</td>
+                        <td>{{i.user}}</td>
+                        <td>{{i.remark}}</td>
+                        <td>
+                            <button class="btn btn-success">查看</button>
+                            <button onclick="delete_project('{{i.id}}')" class="btn btn-danger">删除</button>
+                        </td>
                     </tr>
                 {% endfor %}
         </tbody>
     </table>
+    <script>
+        function delete_project(id){
+                if(confirm("确定删除该项目吗?")==false){return}
+                $.get('/delete_project/',{'id':id},function(ret){
+                    document.location.reload()
+                })
+        }
+    </script>
 </body>
 </html>

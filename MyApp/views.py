@@ -86,6 +86,11 @@ def api_help(request):
 def project_list(request):
     return render(request,'welcome.html',{"whichHTML":"project_list.html","oid":""})
 
+def delete_project(request):
+    id=request.GET['id']
+    DB_project.objects.filter(id=id).delete()
+    return HttpResponse("")
+
 
 
 
