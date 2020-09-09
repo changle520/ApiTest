@@ -23,10 +23,10 @@ def home(request):
     return render(request,'welcome.html',{"whichHTML":"home.html","oid":""})
 
 def child(request,eid,oid):
-    res=child_json(eid)
+    res=child_json(eid,oid)   #对应每个子页面返回的内容
     return render(request,eid,res)
 
-def child_json(eid):
+def child_json(eid,oid=''):
     '''
     数据分发器：控制不同的页面返回不同的数据
     :param eid:
@@ -39,6 +39,9 @@ def child_json(eid):
     if eid=="project_list.html":
         data=DB_project.objects.all()
         res={"projects":data}
+    if eid=="P_apis.html":
+        project_name=DB_project.objects.filter(id=oid)[0].name
+        res={"project_name":project_name}
     return res
 
 def login(request):
@@ -96,6 +99,17 @@ def add_project(request):
     DB_project.objects.create(name=project_name,remark="",user=request.user.username,other_users='')
     return HttpResponse("")
 
+def open_apis(request,id):
+    """进入接口库"""
+    project_id=id
+    return render(request,'welcome.html',{"whichHTML":"P_apis.html","oid":project_id})
 
+def open_cases(request,id):
+    """进入用例设置库"""
+    project_id=id
+    return render(request,'welcome.html',{"whichHTML":"P_cases.html","oid":""})
 
-
+def open_project_set(request,id):
+    """进入项目设置"""
+    project_id=id
+    return render(request,'welcome.html',{"whichHTML":"P_project_set.html","oid":""})
