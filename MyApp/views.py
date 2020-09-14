@@ -48,6 +48,10 @@ def child_json(eid,oid=''):
     if eid=="P_project_set.html":
         project=DB_project.objects.filter(id=oid)[0]
         res={"project":project}
+    if eid=="P_apis.html":
+        project=DB_project.objects.filter(id=oid)[0]
+        apis=DB_apis.objects.filter(project_id=oid)
+        res={"project":project,"apis":apis}
     return res
 
 def login(request):
