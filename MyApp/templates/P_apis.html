@@ -41,7 +41,7 @@
              <tr>
                 <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.api_url }}</td>  <td>
                  <button onclick="" class="btn btn-success">调试</button>
-                 <button class="wqrf_button">备注</button>
+                 <button onclick="open_bz({{i.id}})" class="wqrf_button">备注</button>
                  <button class="wqrf_button">复制</button>
                  <button class="wqrf_button">异常值测试</button>
                  <button onclick="" class="btn btn-danger">删除</button></td>
@@ -60,5 +60,36 @@
         <button type="button" class="btn btn-default">登陆态接口</button>
     </div>
 </div>
+<div id="bz"  style="display:none;width:50%;height:30%;position:fixed;left:25%;top:35%;background-color:#3c4043;box-shadow:4px 4px 8px grey">
+    <input id="which_api" type="text" style="display:none">
+    <textarea id="bz_value" name="" style="width:100%;height:80%" placeholder="请输入该接口备注"></textarea>
+    <button onclick="save_bz()" style="width:49.9%;height:20%">保存</button>
+    <button onclick="close_bz()" style="width:49.3%;height:20%">取消</button>
+</div>
+<script>
+    function open_bz(id){
+        document.getElementById('bz_value').value="";  //这是清空上一个打开的接口的内容
+        $.get('/get_bz/',{"api_id":id},function(ret){
+             document.getElementById('bz').style.display='block';
+             document.getElementById('which_api').value=id;
+             document.getElementById('bz_value').value=ret;
+        })
+
+    }
+</script>
+<script>
+    function close_bz(id){
+        document.getElementById('bz').style.display='none';
+    }
+</script>
+<script>
+    function save_bz(){
+        id=document.getElementById('which_api').value;
+        bz_value=document.getElementById('bz_value').value;
+        $.get('/save_bz/',{"api_id":id,"bz_value":bz_value},function(ret){
+           document.getElementById('bz').style.display='none';
+        })
+    }
+</script>
 </body>
 </html>

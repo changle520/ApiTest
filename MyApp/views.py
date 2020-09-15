@@ -133,3 +133,15 @@ def save_project_set(request,id):
     DB_project.objects.filter(id=project_id).update(name=name,remark=remark,other_users=other_user)
     return HttpResponse('')
 
+#保存备注
+def save_bz(request):
+    api_id=request.GET['api_id']
+    bz_value=request.GET['bz_value']
+    DB_apis.objects.filter(id=api_id).update(des=bz_value)
+    return HttpResponse("")
+
+#获取备注
+def get_bz(request):
+    api_id = request.GET['api_id']
+    bz_value=DB_apis.objects.filter(id=api_id)[0].des
+    return HttpResponse(bz_value)
