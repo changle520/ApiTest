@@ -40,7 +40,7 @@
          {% for i in apis %}
              <tr>
                 <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.api_url }}</td>  <td>
-                 <button onclick="" class="btn btn-success">调试</button>
+                 <button onclick="ts_show('{{i.id}}','{{i.name}}')" class="btn btn-success">调试</button>
                  <button onclick="open_bz({{i.id}})" class="wqrf_button">备注</button>
                  <button class="wqrf_button">复制</button>
                  <button class="wqrf_button">异常值测试</button>
@@ -93,12 +93,12 @@
 </script>
 
 {# 调试弹层及函数 #}
-<div id="ts" style="border-radius:5px;width:80%;position:fixed;lef:10%;top:10%;background-color:#3c4843;box-shadow:4px 4px 8px grey;color:white;padding-left:10px">
+<div id="ts" style="display:none;border-radius:5px;width:80%;position:fixed;lef:10%;top:10%;background-color:#3c4843;box-shadow:4px 4px 8px grey;color:white;padding-left:10px">
     <div class="btn-group" style="float:right">
         <button onclick="ts_save()" type="button" class="btn btn-success">保存</button>
         <button onclick="ts_close()" type="button" class="btn btn-default">取消</button>
     </div>
-    <h3>接口:<small></small><small></small></h3>
+    <h3>接口:<small id="ts_api_id" style="color:greenyellow"></small><small id="ts_api_name" style="color:greenyellow"></small></h3>
     <ul class="nav navbar-nav" style="width: 98%">
 
         <li>
@@ -142,7 +142,7 @@
     </ul>
     <br><br><br>
     <ul id="myTab" class="nav nav-tabs" >
-        <li class="active"><a href="#none" data-toggle="tab" >none</a></li>
+        <li class="active"><a id="click_none" href="#none" data-toggle="tab" >none</a></li>
         <li ><a href="#form-data" data-toggle="tab" >form-data</a></li>
         <li ><a href="#x-www-form-urlencoded" data-toggle="tab" >x-www-form-urlencoded</a></li>
         <li class="dropdown">
@@ -173,14 +173,14 @@
                         <td style="width: 50%">Value</td>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="mytbody">
                       <tr>
-                        <td>Username</td>
-                        <td>wqrf</td>
+                        <td></td>
+                        <td></td>
                       </tr>
                         <tr>
-                        <td>Password</td>
-                        <td>123456</td>
+                        <td></td>
+                        <td></td>
                       </tr>
                     </tbody>
                 </table>
@@ -204,14 +204,14 @@
                         <td style="width: 50%">Value</td>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="mybody2">
                       <tr>
-                        <td>Username</td>
-                        <td>wqrf</td>
+                        <td></td>
+                        <td></td>
                       </tr>
                         <tr>
-                        <td>Password</td>
-                        <td>123456</td>
+                        <td></td>
+                        <td></td>
                       </tr>
                     </tbody>
                 </table>
@@ -227,31 +227,63 @@
         </div>
         <div class="tab-pane fade" id="Text">
             进入了Text
-            <textarea name="" id="" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="raw_Text" style="color:black;width:98%;height:300px"></textarea>
         </div>
         <div class="tab-pane fade" id="JavaScript">
             进入了JavaScript
-            <textarea name="" id="" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="raw_JavaScript" style="color:black;width:98%;height:300px"></textarea>
         </div>
         <div class="tab-pane fade" id="Json">
             进入了Json
-            <textarea name="" id="" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="raw_Json" style="color:black;width:98%;height:300px"></textarea>
         </div>
         <div class="tab-pane fade" id="Html">
             进入了Html
-            <textarea name="" id="" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="raw_Html" style="color:black;width:98%;height:300px"></textarea>
         </div>
         <div class="tab-pane fade" id="Xml">
             进入了Xml
-            <textarea name="" id="" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="raw_Xml" style="color:black;width:98%;height:300px"></textarea>
         </div>
         <div class="tab-pane fade" id="reponse">
             进入返回体
-            <textarea name="" id="" disabled="disabled" style="color:black;width:98%;height:300px"></textarea>
+            <textarea name="" id="ts_response_body" disabled="disabled" style="color:black;width:98%;height:300px"></textarea>
         </div>
     </div>
 </div>
 <script>
+    function clear_ts_api(){
+        document.getElementById('ts_api_id').innerText='';
+        document.getElementById('ts_api_name').innerText='';
+        document.getElementById('ts_method').value='none';
+        document.getElementById('ts_url').value='';
+        document.getElementById('ts_host').value='';
+        document.getElementById('ts_header').value={};
+        //开始初始化请求体编码格式部分:
+        document.getElementById('click_none').click();//点击none子标签
+        <!--document.getElementById('mytbody').innerHTML='<tr><td></td><td></td></tr>';-->
+        <!--document.getElementById('mytbody2').innerHTML='<tr><td></td><td></td></tr>';-->
+        document.getElementById('raw_Text').value='';
+        document.getElementById('raw_JavaScript').value='';
+        document.getElementById('raw_Json').value='';
+        document.getElementById('raw_Html').value='';
+        document.getElementById('raw_Xml').value='';
+        //返回体清空
+        document.getElementById('ts_response_body').value='';
+        //运行第三方表格体插件的函数
+        $('#mytable').SetEditable({
+                    $addButton: $('#add'),
+                });
+        $('#mytable2').SetEditable({
+                    $addButton: $('#add2'),
+                });
+    }
+    function ts_show(id,name){
+        clear_ts_api();
+        document.getElementById('ts').style.display='block';
+        document.getElementById('ts_api_id').innerText=id;
+        document.getElementById('ts_api_name').innerText=name;
+    }
     function ts_close(){
         document.getElementById('ts').style.display='none';
     }
@@ -278,32 +310,54 @@
                 ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
                 }
                 console.log(ts_api_body)
-
+            ts_api_body=JSON.stringify(ts_api_body); //把数组转成字符串
         }
         if(ts_body_method=='x-www-form-urlencoded')
         {
-            var ts_api_body=''
+            var ts_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#mytable2 tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+                }
+                console.log(ts_api_body)
+            ts_api_body=JSON.stringify(ts_api_body); //把数组转成字符串
         }
         if(ts_body_method=='Text')
         {
-            var ts_api_body=''
+            var ts_api_body=document.getElementById('raw_Text').value
         }
         if(ts_body_method=='JavaScript')
         {
-            var ts_api_body=''
+            var ts_api_body=document.getElementById('raw_JavaScript').value
         }
         if(ts_body_method=='Json')
         {
-            var ts_api_body=''
+            var ts_api_body=document.getElementById('raw_Json').value
         }
         if(ts_body_method=='Html')
         {
-            var ts_api_body=''
+            var ts_api_body=document.getElementById('raw_Html').value
         }
         if(ts_body_method=='Xml')
         {
-            var ts_api_body=''
+            var ts_api_body=document.getElementById('raw_Xml').value
         }
+        var api_id=document.getElementById("ts_api_id").innerText; //获取到了接口id
+        $.get('/Api_save/',{
+            'api_id':api_id,
+            'ts_method':ts_method,
+            'ts_url':ts_url,
+            'ts_host':ts_host,
+            'ts_header':ts_header,
+            'ts_body_method':ts_body_method,
+            'ts_api_body':ts_api_body
+            },function (ret){
+                document.getElementById('ts').style.display='none';
+            })
     }
 </script>
 </body>
