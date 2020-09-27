@@ -98,7 +98,10 @@
         <button onclick="ts_save()" type="button" class="btn btn-success">保存</button>
         <button onclick="ts_close()" type="button" class="btn btn-default">取消</button>
     </div>
-    <h3>接口:<small id="ts_api_id" style="color:greenyellow"></small><small id="ts_api_name" style="color:greenyellow"></small></h3>
+    <h3>接口:
+        <small id="ts_api_id" style="color:greenyellow"></small>
+        <input type="text" id="ts_api_name" style="padding-lef:5px;color:#329014;width:50%">
+    </h3>
     <ul class="nav navbar-nav" style="width: 98%">
 
         <li>
@@ -188,11 +191,6 @@
             <button class="btn btn-default" id="add"><i class="fa fa-plus"></i> 添加新参数</button>
             <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
             <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
-            <script type="text/javascript">
-                $('#mytable').SetEditable({
-                    $addButton: $('#add'),
-                });
-            </script>
         </div>
         <div class="tab-pane fade" id="x-www-form-urlencoded">
             进入了x-www-form-urlencoded
@@ -219,11 +217,6 @@
             <button class="btn btn-default" id="add2"><i class="fa fa-plus"></i> 添加新参数</button>
             <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
             <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
-            <script type="text/javascript">
-                $('#mytable2').SetEditable({
-                    $addButton: $('#add2'),
-                });
-            </script>
         </div>
         <div class="tab-pane fade" id="Text">
             进入了Text
@@ -254,7 +247,7 @@
 <script>
     function clear_ts_api(){
         document.getElementById('ts_api_id').innerText='';
-        document.getElementById('ts_api_name').innerText='';
+        document.getElementById('ts_api_name').value='';
         document.getElementById('ts_method').value='none';
         document.getElementById('ts_url').value='';
         document.getElementById('ts_host').value='';
@@ -282,13 +275,27 @@
         clear_ts_api();
         document.getElementById('ts').style.display='block';
         document.getElementById('ts_api_id').innerText=id;
-        document.getElementById('ts_api_name').innerText=name;
+
+        $.get("/get_api_data/",
+            {"api_id":id},function (ret){
+            console.log(ret)
+            //接收返回后的动作
+            document.getElementById('ts_api_name').value=ret.name;
+            document.getElementById('ts_method').value=ret.api_method;
+            document.getElementById('ts_url').value=ret.api_url;
+            document.getElementById('ts_host').value=ret.api_host;
+            document.getElementById('ts_header').value=ret.api_header;
+            //请求体编码格式
+            var body_method="#"+ret.body_method;
+            $("li a[href="+body_method+"]").click();
+        })
     }
     function ts_close(){
         document.getElementById('ts').style.display='none';
     }
     function ts_save(){
         //获取所有接口设置数据
+        var api_name=document.getElementById("ts_api_name").value;
         var ts_method=document.getElementById("ts_method").value;
         var ts_url=document.getElementById("ts_url").value;
         var ts_host=document.getElementById("ts_host").value;
@@ -349,6 +356,7 @@
         var api_id=document.getElementById("ts_api_id").innerText; //获取到了接口id
         $.get('/Api_save/',{
             'api_id':api_id,
+            'api_name':api_name,
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
@@ -356,7 +364,7 @@
             'ts_body_method':ts_body_method,
             'ts_api_body':ts_api_body
             },function (ret){
-                document.getElementById('ts').style.display='none';
+                document.location.reload();
             })
     }
 </script>

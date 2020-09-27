@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib.auth.models import User
 from MyApp.models import *
+import json
 
 @login_required
 def welcome(request):
@@ -102,6 +103,7 @@ def project_list(request):
 def delete_project(request):
     id=request.GET['id']
     DB_project.objects.filter(id=id).delete()
+    DB_apis.objects.filter(project_id=id).delete()  #删除项目的同时，删除项目中创建的接口
     return HttpResponse("")
 
 def add_project(request):
@@ -150,6 +152,7 @@ def get_bz(request):
 def Api_save(request):
     #提前所有数据
     api_id=request.GET['api_id']
+    api_name=request.GET['api_name']
     ts_method=request.GET['ts_method']
     ts_url=request.GET['ts_url']
     ts_host=request.GET['ts_host']
@@ -164,8 +167,15 @@ def Api_save(request):
         api_header=ts_header,
         api_host=ts_host,
         body_method=ts_body_method,
-        api_body=ts_api_body
+        api_body=ts_api_body,
+        name=api_name
     )
 
     #返回
     return HttpResponse('success')
+
+#获取接口数据
+def get_api_data(request):
+    api_id=request.GET['api_id']
+    api=DB_apis.objects.filter(id=api_id).values()[0]
+    return HttpResponse(json.dumps(api),content_type='application/json')
