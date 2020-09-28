@@ -158,7 +158,13 @@ def Api_save(request):
     ts_host=request.GET['ts_host']
     ts_header=request.GET['ts_header']
     ts_body_method=request.GET['ts_body_method']
-    ts_api_body=request.GET['ts_api_body']
+    if ts_body_method=="返回体":
+        api=DB_apis.objects.filter(id=api_id)[0]
+        ts_body_method=api.last_body_method
+        ts_api_body=api.last_api_body
+
+    else:
+        ts_api_body = request.GET['ts_api_body']
 
     #保存数据
     DB_apis.objects.filter(id=api_id).update(
@@ -179,3 +185,32 @@ def get_api_data(request):
     api_id=request.GET['api_id']
     api=DB_apis.objects.filter(id=api_id).values()[0]
     return HttpResponse(json.dumps(api),content_type='application/json')
+
+#调试层发送请求
+def Api_send(request):
+    #提取所有数据
+    api_id=request.GET['api_id']
+    ts_method=request.GET['ts_method']
+    ts_url=request.GET['ts_url']
+    ts_host=request.GET['ts_host']
+    ts_header=request.GET['ts_header']
+    api_name=request.GET['api_name']
+    ts_body_method = request.GET['ts_body_method']
+    print(ts_body_method)
+    if ts_body_method=="返回体":
+        api=DB_apis.objects.filter(id=api_id)[0]
+        ts_body_method=api.last_body_method
+        ts_api_body=api.last_api_body
+
+        if ts_body_method in ['',None]:
+            return HttpResponse("请先选择请求体编码格式和请求体，再点击send按钮发送请求")
+    else:
+        ts_api_body=request.GET['ts_api_body']
+        api=DB_apis.objects.filter(id=api_id)
+        api.update(last_body_method=ts_body_method,last_api_body=ts_api_body)
+
+    #发送请求获取返回值
+
+    #把返回值传递给前端页面
+    return HttpResponse('{"code":200}')
+
