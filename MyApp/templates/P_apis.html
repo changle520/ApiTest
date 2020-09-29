@@ -120,7 +120,7 @@
         </li>
 
         <li >
-            <button type="button"
+            <button onclick="ts_send()" type="button"
                     style="height: 40px;width: 120px;"
                     class="btn btn-default"><span style="font-size: large">Send</span></button>
         </li>
@@ -245,6 +245,81 @@
     </div>
 </div>
 <script>
+    function ts_send(){
+         //获取所有接口设置数据
+        var api_name=document.getElementById("ts_api_name").value;
+        var ts_method=document.getElementById("ts_method").value;
+        var ts_url=document.getElementById("ts_url").value;
+        var ts_host=document.getElementById("ts_host").value;
+        var ts_header=document.getElementById("ts_header").value;
+        var ts_body_method=$('ul#myTab li[class="active"]')[0].innerText;
+        if(ts_body_method=='none')
+        {
+            var ts_api_body=''
+        }
+        if(ts_body_method=='form-data')
+        {
+            var ts_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#mytable tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+                }
+                console.log(ts_api_body)
+            ts_api_body=JSON.stringify(ts_api_body); //把数组转成字符串
+        }
+        if(ts_body_method == 'x-www-form-urlencoded')
+        {
+            var ts_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#mytable2 tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+                }
+                console.log(ts_api_body)
+            ts_api_body=JSON.stringify(ts_api_body); //把数组转成字符串
+        }
+        if(ts_body_method=='Text')
+        {
+            var ts_api_body=document.getElementById('raw_Text').value
+        }
+        if(ts_body_method=='JavaScript')
+        {
+            var ts_api_body=document.getElementById('raw_JavaScript').value
+        }
+        if(ts_body_method=='Json')
+        {
+            var ts_api_body=document.getElementById('raw_Json').value
+        }
+        if(ts_body_method=='Html')
+        {
+            var ts_api_body=document.getElementById('raw_Html').value
+        }
+        if(ts_body_method=='Xml')
+        {
+            var ts_api_body=document.getElementById('raw_Xml').value
+        }
+        var api_id=document.getElementById("ts_api_id").innerText; //获取到了接口id
+        $.get('/Api_send/',{
+            'api_id':api_id,
+            'api_name':api_name,
+            'ts_method':ts_method,
+            'ts_url':ts_url,
+            'ts_host':ts_host,
+            'ts_header':ts_header,
+            'ts_body_method':ts_body_method,
+            'ts_api_body':ts_api_body
+            },function (ret){
+                $("li a[href=#reponse]").click(); //点击一下返回按钮
+                document.getElementById('ts_response_body').value=ret; //把返回值显示到返回体中
+            })
+    }
     function clear_ts_api(){
         document.getElementById('ts_api_id').innerText='';
         document.getElementById('ts_api_name').value='';
@@ -339,7 +414,7 @@
         })
     }
     function ts_close(){
-        document.getElementById('ts').style.display='none';
+        document.location.reload();
     }
     function ts_save(){
         //获取所有接口设置数据

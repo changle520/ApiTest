@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib.auth.models import User
 from MyApp.models import *
-import json
+import json,requests
 
 @login_required
 def welcome(request):
@@ -210,7 +210,47 @@ def Api_send(request):
         api.update(last_body_method=ts_body_method,last_api_body=ts_api_body)
 
     #发送请求获取返回值
+    header=json.loads(ts_header)
+
+    #拼接完整url
+    if ts_host[-1] == '/' and ts_url[0]=='/':
+        url=ts_host[:-1]+ts_url
+    elif ts_host[-1] !='/' and ts_url[0] !='/':
+        url=ts_host+'/'+ts_url
+    else:
+        url=ts_host+ts_url
+
+    if ts_body_method=='none':
+        response=requests.request(ts_method.upper(),url,headers=header,data={})
+
+    elif ts_body_method=="form-data":
+        files=[]
+        payload={}
+        for i in eval(ts_api_body):
+            payload[i[0]]=i[1]
+        response=requests.request(ts_method.upper(),url,headers=header,data=payload,files=files)
+
+    elif ts_body_method=='x-www-form-urlencoded':
+        header['content-type']='application/x-www-form-urlencoded'
+        payload={}
+        for i in eval(ts_api_body):
+            payload[i[0]] = i[1]
+            response = requests.request(ts_method.upper(), url, headers=header, data=payload)
+
+    else: #这时肯定是raw的5个子选项
+        if ts_body_method=='Text':
+            header['content-type'] = 'text/plain'
+        if ts_body_method=='JavaScript':
+            header['content-type'] = 'text/plain'
+        if ts_body_method=='Json':
+            header['content-type'] = 'text/plain'
+        if ts_body_method=='Html':
+            header['content-type'] = 'text/plain'
+        if ts_body_method=='Xml':
+            header['content-type'] = 'text/plain'
+        response = requests.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+
 
     #把返回值传递给前端页面
-    return HttpResponse('{"code":200}')
+    return HttpResponse(response.text)
 
