@@ -33,9 +33,9 @@
              <tr>
                 <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.api_url }}</td>  <td>
                  <button onclick="ts_show('{{i.id}}','{{i.name}}')" class="btn btn-success">调试</button>
-                 <button onclick="open_bz({{i.id}})" class="btn-default">备注</button>
-                 <button class="btn-default">复制</button>
-                 <button class="btn-default">异常值测试</button>
+                 <button onclick="open_bz('{{i.id}}')" class="btn-default">备注</button>
+                 <button onclick="copy_api('{{i.id}}')" class="btn-default">复制</button>
+                 <button onclick="error_test('{{i.id}}','{{i.api_body}}')" class="btn-default">异常值测试</button>
                  <button onclick="" class="btn btn-danger">删除</button></td>
             </tr>
         {% endfor %}
@@ -58,6 +58,11 @@
     <button onclick="save_bz()" style="width:49.9%;height:20%">保存</button>
     <button onclick="close_bz()" style="width:49.3%;height:20%">取消</button>
 </div>
+<script>
+    function copy_api(api_id){
+        $.get("/copy_api/",{"api_id":api_id},function (ret) {document.location.reload()})
+    }
+</script>
 <script>
     function open_bz(id){
         document.getElementById('bz_value').value="";  //这是清空上一个打开的接口的内容
@@ -518,6 +523,53 @@
             },function (ret){
                 document.location.reload();
             })
+    }
+</script>
+{# 异常值测试 #}
+<div id="error_div" style="display:none;border-radius:5px;width:80%;position:absolute;lef:10%;top:10%;background-color:#3c4843;box-shadow:4px 4px 8px grey;color:white;padding-left:10px">
+    <div class="btn-group">
+        <button onclick="" type="button" class="btn btn-success">开始测试</button>
+        <button onclick="error_close()" type="button" class="btn btn-default">关闭</button>
+    </div>
+    <h4>接口：<small id="error_api_name"></small> 的异常值测试结果如下：</h4>
+    <strong>待替换数据:(用英文逗号隔开)</strong>
+    <input id="ready_error_data" type="text" style="color: black;border-radius: 5px;width: 99%"
+    value="'a',123,'',' ','./?*&^','中文'"> <br><br>
+
+    <span>替换：username -> 123</span>
+    <textarea style="width: 99%;height: 50px;border-radius: 5px;color: black">
+    </textarea>
+
+    <span>替换：username -> "aaa"</span>
+    <textarea style="width: 99%;height: 50px;border-radius: 5px;color: black">
+    </textarea>
+
+    <span>替换：username -> "哈哈哈"</span>
+    <textarea style="width: 99%;height: 50px;border-radius: 5px;color: black">
+    </textarea>
+
+</div>
+<script>
+    function error_test(api_id,api_body){
+        error_clean()
+        document.getElementById('error_div').style.display='block';
+        document.getElementById('error_api_name').innerText=api_id;
+    }
+    function error_close(){
+        document.getElementById('error_div').style.display='none';
+    }
+    function error_clean(){
+        document.getElementById('error_div').innerHTML = ' <div class="btn-group" style="float: right">\n' +
+            '        <button onclick="error_play()" type="button" class="btn btn-success">开始测试</button>\n' +
+            '        <button onclick="error_close()" type="button" class="btn btn-default">关闭</button>\n' +
+            '    </div>\n' +
+            '\n' +
+            '    <h4>接口：<small style="color: #0dff00" id="error_api_name"></small> 的异常值测试结果如下：</h4>\n' +
+            '\n' +
+            '    <strong>待替换数据:(用英文逗号隔开)</strong>\n' +
+            '    <input id="ready_error_data" type="text" style="color: black;border-radius: 5px;width: 99%"\n' +
+            '    value="\'a\',123,\'\',\' \',\'./?*&^\',\'中文\'"\n' +
+            '    > <br><br>'
     }
 </script>
 </body>
