@@ -280,3 +280,44 @@ def copy_api(requests):
                            )
     #返回
     return HttpResponse("")
+
+#异常值发送请求
+def error_request(request):
+        api_id = request.GET['api_id']
+        new_body = request.GET['new_body']
+        api = DB_apis.objects.filter(id=api_id)[0]
+        method = api.api_method
+        url = api.api_url
+        host = api.api_host
+        header = api.api_header
+        body_method = api.body_method
+        header = json.loads(header)
+        try:
+            if host[-1] == '/' and url[0] == '/':  # 都有/
+                url = host[:-1] + url
+            elif host[-1] != '/' and url[0] != '/':  # 都没有/
+                url = host + '/' + url
+            else:  # 肯定有一个有/
+                url = host + url
+            if body_method == 'form-data':
+                files = []
+                payload = {}
+                for i in eval(new_body):
+                    payload[i[0]] = i[1]
+                response = requests.request(method.upper(), url, headers=header, data=payload, files=files)
+            elif body_method == 'x-www-form-urlencoded':
+                header['Content-Type'] = 'application/x-www-form-urlencoded'
+                payload = {}
+                for i in eval(new_body):
+                    payload[i[0]] = i[1]
+                response = requests.request(method.upper(), url, headers=header, data=payload)
+            elif body_method == 'Json':
+                header['Content-Type'] = 'text/plain'
+                response = requests.request(method.upper(), url, headers=header, data=new_body.encode('utf-8'))
+            else:
+                return HttpResponse('非法的请求体类型')
+            # 把返回值传递给前端页面
+            response.encoding = "utf-8"
+            return HttpResponse(response.text)
+        except:
+            return HttpResponse("对不起,接口未通!")

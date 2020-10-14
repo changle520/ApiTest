@@ -363,6 +363,11 @@
                 });
     }
     function ts_show(id,name){
+        //显示蒙层,并设置好蒙层的层级关系，让其在调试层之下，其它元素之上
+        document.getElementById('mengceng').style.display='block';
+        document.getElementById('mengceng').style.zIndex='998';
+        document.getElementById('ts').style.zIndex='999';
+
         clear_ts_api();
         document.getElementById('ts').style.display='block';
         document.getElementById('ts_api_id').innerText=id;
@@ -528,7 +533,7 @@
 {# 异常值测试 #}
 <div id="error_div" style="display:none;border-radius:5px;width:80%;position:absolute;lef:10%;top:10%;background-color:#3c4843;box-shadow:4px 4px 8px grey;color:white;padding-left:10px">
     <div class="btn-group">
-        <button onclick="" type="button" class="btn btn-success">开始测试</button>
+        <button onclick="error_play()" type="button" class="btn btn-success">开始测试</button>
         <button onclick="error_close()" type="button" class="btn btn-default">关闭</button>
     </div>
     <h4>接口：<small id="error_api_name"></small> 的异常值测试结果如下：</h4>
@@ -549,14 +554,30 @@
     </textarea>
 
 </div>
+<input type="text" style="display:none" id="error_api_body">
+
 <script>
+    function error_show_response(span_text,ret) {
+        var error_div = document.getElementById('error_div'); // 声明这个请求体展示窗口
+        var s = document.createElement('span'); //创造替换标题
+        s.innerText = span_text;
+
+        var t = document.createElement('textarea'); //传教替换内容多行文本
+        t.style = 'width: 99%;height: 50px;border-radius: 5px;color: black;margin-bottom: 10px';
+        t.value = ret;
+
+        error_div.appendChild(s);
+        error_div.appendChild(t);
+    }
+
     function error_test(api_id,api_body){
         error_clean()
         document.getElementById('error_div').style.display='block';
         document.getElementById('error_api_name').innerText=api_id;
+        document.getElementById('error_api_body').value=api_body;
     }
     function error_close(){
-        document.getElementById('error_div').style.display='none';
+        document.location.reload()
     }
     function error_clean(){
         document.getElementById('error_div').innerHTML = ' <div class="btn-group" style="float: right">\n' +
@@ -571,6 +592,63 @@
             '    value="\'a\',123,\'\',\' \',\'./?*&^\',\'中文\'"\n' +
             '    > <br><br>'
     }
+    function error_play() {
+        api_id=document.getElementById('error_api_name').innerText;
+        console.log(api_id);
+        api_body = document.getElementById('error_api_body').value;
+        ready_error_data = document.getElementById('ready_error_data').value;
+        //把预替换字符串按逗号解析成数组
+        var r=ready_error_data.split(",");
+
+        //判断是不是form-data/x-www...的二维数组格式
+        try {
+            var s = eval(api_body);
+            if(s instanceof Array){
+                    console.log('这是数组')
+                    for(var i=0;i<s.length;i++){ //第一层 判断一共请求体有几个参数就进行几次大循环
+                        for(var j=0;j<r.length;j++){
+                            var new_body = []; //我们不能在s本尊上来回替换，所以弄了个替身，这个替身每次新的参数循环，都会重新被赋值原始s
+                            $.extend(true,new_body, s);
+                            new_body[i][1] = eval(r[j]);
+                            console.log(new_body)
+                            var span_text='替换'+new_body[i][0]+'---->'+r[j];
+                            $.get("/error_request/",{"api_id":api_id,"new_body":JSON.stringify(new_body)},function(ret){error_show_response(span_text,ret)});
+                        }
+                    }
+            }
+            else{
+                    console.log("这是none");
+                    alert('当前请求体不含任何内容')
+            }
+
+        }catch (e) {
+            //若不是就继续判断是不是raw-json的json串格式
+            try {
+                var s = JSON.parse(api_body);
+                console.log(s);
+                console.log('这是字典json');
+                for(var i in s){
+                    for(var j=0;j<r.length;j++){
+                        var new_body = {};
+                        $.extend(true,new_body, s);
+                        new_body[i] = eval(r[j]);
+                        console.log(new_body);
+                        var span_text='替换'+new_body[i][0]+'---->'+r[j];
+                        $.get("/error_request/",{"api_id":api_id,"new_body":JSON.stringify(new_body)},function(ret){error_show_response(span_text,ret)});
+                    }
+            }
+            }catch (e) {
+                //若也不是，那就不需要做异常值测试了
+                alert('当前接口的请求体类型不支持异常值测试！')
+            }
+        }
+}
+</script>
+<div id="mengceng" style="display: none;opacity:0.5;position: absolute;left: 0;top: 100px;
+                          background-color: gray;width: 100%">
+</div>
+<script>
+    document.getElementById('mengceng').style.height=window.screen.availHeight.toString()+'px';
 </script>
 </body>
 </html>
